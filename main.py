@@ -1,4 +1,5 @@
 import os
+import logging
 import shutil
 import time
 from watchdog.observers import Observer
@@ -9,10 +10,10 @@ def delete_file(file_path: str) -> bool:
     # Удаление файла
     if os.path.exists(file_path):
         os.remove(file_path)
-        print(f'Файл {file_path} удалён.')
+        logging.info(f'Файл {file_path} удалён.')
         return 1
     else:
-        print(f'Файл {file_path} не существует.')
+        logging.info(f'Файл {file_path} не существует.')
         return 0
 
 
@@ -20,14 +21,14 @@ def delete_non_empty_directory(dir_path: str) -> bool:
     # Удаление директории с содержимым
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path)
-        print(f'Директория {dir_path} с содержимым удалена.')
+        logging.info(f'Директория {dir_path} с содержимым удалена.')
         return 1
     else:
-        print(f'Директория {dir_path} не существует.')
+        logging.info(f'Директория {dir_path} не существует.')
         return 0
 
 
-def main():
+def main(path_name):
     class MyEventHandler(FileSystemEventHandler):
         def on_created(self, event):
             changes_item_lst.append(event.src_path)
@@ -48,7 +49,7 @@ def main():
                     break
 
     changes_item_lst = []   # keep path to changes files or directories
-    path = "/home/vlad/Desktop"
+    path = path_name
     event_handler = MyEventHandler()
     observer = Observer()
     observer.schedule(event_handler, path, recursive=True)
@@ -61,7 +62,7 @@ def main():
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
-    print(f'\n{changes_item_lst=}')
+    logging.info(f'{changes_item_lst=}')
 
     while changes_item_lst:
         file_name = ''
@@ -75,7 +76,7 @@ def main():
         else:    # if this directory
             directory_name = current_path_to_obj.split('/')[-1]
 
-        if file_name:
+        if file_name and file_name != 'program.log':
             result_statue = delete_file(current_path_to_obj)
         elif directory_name:
             result_statue = delete_non_empty_directory(current_path_to_obj)
@@ -84,6 +85,10 @@ def main():
 
 
 if __name__ == "__main__":
+    path_name = "/home/vlad/Desktop"    # path to trackable directory
+    logging.basicConfig(filename=os.path.join(path_name, 'program.log'), filemode='w+', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     print('Programm starting...')
-    main()
+    logging.info('Programm starting...')
+    main(path_name)
     print('Programm finished')
+    logging.info('Programm finished')
