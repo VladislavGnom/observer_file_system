@@ -1,3 +1,21 @@
+# import requests 
+# import json
+# from hashlib import md5
+
+# API_URL = "http://127.0.0.1:8000"
+# prompt_image = 'https://static-cse.canva.com/blob/191106/00_verzosa_winterlandscapes_jakob-owens-tb-2640x1485.jpg'
+# SECURITY_KEY_FOR_WEBAPP_API = '4f1413482bb60b38a18c580c14d305f3'
+
+# # Определяем заголовки
+# headers = {
+#     'User-Agent': 'my-app/0.0.1',
+#     'Authorization': md5(SECURITY_KEY_FOR_WEBAPP_API.encode()).hexdigest(),
+# }
+
+# data = requests.get(f'{API_URL}/load_photo', params={'image_name':prompt_image}, headers=headers)
+
+# print(data.json()['url'])
+
 import os
 import logging
 import shutil
@@ -52,7 +70,10 @@ def main(path_name):
     path = path_name
     event_handler = MyEventHandler()
     observer = Observer()
-    observer.schedule(event_handler, path, recursive=True)
+    try:
+        observer.schedule(event_handler, path, recursive=True)
+    except Exception as exc:
+        logging.error(exc)
 
     observer.start()
     print('Programm started')
