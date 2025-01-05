@@ -114,7 +114,7 @@ if __name__ == "__main__":
     path_name = "/home/vlad/Desktop"    # path to trackable directory
     logging.basicConfig(filename=os.path.join(path_name, 'program.log'), filemode='a+', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     print('Programm starting...')
-    logging.info('\n\nProgramm starting...')
+    logging.info('Programm starting...')
     main(path_name)
     print('Programm finished')
-    logging.info('Programm finished')
+    logging.info('Programm finished\n\n')
